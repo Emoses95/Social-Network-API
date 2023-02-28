@@ -1,6 +1,29 @@
 const { Schema, model } = require('mongoose');
-const reactionSchema = require("./Reaction");
-const Schema = mongoose.Schema;
+
+// subdocment
+const reactionSchema = new Schema(
+    {
+        reactionBody: {
+            type: String,
+            required: true,
+            maxlength: 280,
+        },
+        username: {
+            type: String,
+            required: true,
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now,
+            // timestamp
+        }
+    },
+    {
+        toJSON: {
+            getters: true,
+        }
+    }
+)
 
 
 const thoughtSchema = new Schema(
@@ -13,15 +36,25 @@ const thoughtSchema = new Schema(
         },
         createdAt: {
             type: Date,
-            timestamp_col: TIMESTAMP,
-            default: CURRENT_TIMESTAMP
+            default: Date.now,
+            // timestamp 
         },
         username: {
             type: String,
             required: true
         },
-        reactions: [reactionSchema],
-    }, { timestamps: true });
+        reactions: [
+            reactionSchema
+        ]
+    },
+    {
+        toJSON: {
+            virtuals: true,
+            getters: true,
+        },
+    }
+);
+
 // Retrieves the length of the thought's reactions array field 
 thoughtSchema.virtual('reactionCount').get(function () {
     return this.reactions.length;
